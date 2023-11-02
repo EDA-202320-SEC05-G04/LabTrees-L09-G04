@@ -112,8 +112,12 @@ def newAreaEntry(crime):
     Crea una entrada para el indice de areas reportadas
     """
     # TODO lab 9, crear una entrada para el indice de areas reportadas
-    entry = {"lstcrimes": None, }
+   
+    entry = {"lstcrimes": None}
+    entry["lstcrimes"] = lt.newList("SINGLE_LINKED", compareDates)
+    lt.addLast(entry["lstcrimes"], crime)
     return entry
+
 
 
 def addAreaIndex(area_entry, crime):
@@ -237,7 +241,7 @@ def indexHeightAreas(analyzer):
     Altura del arbol por areas
     """
     # TODO lab 9, leer la altura del arbol por areas
-    pass
+    return om.height(analyzer["areaIndex"])
 
 
 def indexSizeAreas(analyzer):
@@ -245,7 +249,7 @@ def indexSizeAreas(analyzer):
     Numero de elementos en el indice por areas
     """
     # TODO lab 9, leer el numero de elementos en el indice por areas
-    pass
+    return om.size(analyzer["areaIndex"])
 
 
 def minKeyAreas(analyzer):
@@ -253,7 +257,7 @@ def minKeyAreas(analyzer):
     Llave mas pequena por areas
     """
     # TODO lab 9, leer la llave mas pequena por areas
-    pass
+    return om.minKey(analyzer["areaIndex"])
 
 
 def maxKeyAreas(analyzer):
@@ -261,7 +265,7 @@ def maxKeyAreas(analyzer):
     Llave mas grande por areas
     """
     # TODO lab 9, leer la llave mas grande por areas
-    pass
+    return om.maxKey(analyzer["areaIndex"])
 
 
 def getCrimesByRangeArea(analyzer, initialArea, finalArea):
@@ -269,7 +273,10 @@ def getCrimesByRangeArea(analyzer, initialArea, finalArea):
     Retorna el numero de crimenes en un rango de areas
     """
     # TODO lab 9, completar la consulta de crimenes por rango de areas
+    lst = om.values(analyzer["areaIndex"], initialDate, finalDate)
     totalcrimes = 0
+    for lstdate in lt.iterator(lst):
+        totalcrimes += lt.size(lstdate["lstcrimes"])
     return totalcrimes
 
 
