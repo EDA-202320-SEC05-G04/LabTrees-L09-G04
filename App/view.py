@@ -106,11 +106,11 @@ while True:
         print("\nBuscando crimenes en un rango de areas: ")
         print("Las areas estan numeradas con enteros (1 - 962)")
         print("Un area desconocida tiene el el numero 9999")
-        initialDate = input("Fecha (YYYY-MM-DD): ")
-        offensecode = input("Ofensa: ")
+        initialDate = input("Area inicial: ")
+        offensecode = input("Area final: ")
         numoffenses = controller.getCrimesByRangeArea(cont, initialDate,
                                                       offensecode)
-        print("\nTotal de ofensas tipo: " + offensecode + " en esa fecha:  " +
+        print("\nTotal de crimenes en el rando de area: "  +
               str(numoffenses))
 
     else:

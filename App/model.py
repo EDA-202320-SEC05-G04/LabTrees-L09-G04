@@ -61,8 +61,7 @@ def newAnalyzer():
     analyzer["dateIndex"] = om.newMap(omaptype="RBT",
                                       comparefunction=compareDates)
     # TODO lab 9, crear el indice ordenado por areas reportadas
-    analyzer["areaIndex"] = om.newMap(omaptype="RBT",
-                                      comparefunction=compareDates)
+    analyzer["areaIndex"] = om.newMap(omaptype="RBT")
     return analyzer
 
 
@@ -87,15 +86,14 @@ def updateAreaIndex(map, crime):
     si el area es nueva, se crea una entrada para el indice y se adiciona
     y si el area son ["", " ", None] se utiliza el valor por defecto 9999
     """
-    occurreddate = crime["OCCURRED_ON_DATE"]
-    crimedate = datetime.datetime.strptime(occurreddate, "%Y-%m-%d %H:%M:%S")
-    entry = om.get(map, crimedate.date())
+    occurreddate = crime["REPORTING_AREA"]
+    entry = om.get(map, occurreddate)
     if entry is None:
         datentry = newDataEntry(crime)
-        om.put(map, crimedate.date(), datentry)
+        om.put(map, occurreddate , datentry)
     else:
         datentry = me.getValue(entry)
-    addDateIndex(datentry, crime)
+    addDateIndex1(datentry, crime)
     return map
     # TODO lab 9, implementar actualizacion del indice por areas reportadas
     # revisar si el area es un str vacio ["", " ", None]
@@ -104,7 +102,7 @@ def updateAreaIndex(map, crime):
     # revisar si el area ya esta en el indice
 
     # si el area ya esta en el indice, adicionar el crimen a la lista
-    return map
+  
 
 
 def newAreaEntry(crime):
@@ -169,6 +167,25 @@ def addDateIndex(datentry, crime):
         lt.addLast(entry["lstoffenses"], crime)
     return datentry
 
+def addDateIndex1(datentry, crime):
+    """
+    Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
+    de crimenes y una tabla de hash cuya llave es el tipo de crimen y
+    el valor es una lista con los crimenes de dicho tipo en la fecha que
+    se está consultando (dada por el nodo del arbol)
+    """
+    lst = datentry["lstcrimes"]
+    lt.addLast(lst, crime)
+    offenseIndex = datentry["offenseIndex"]
+    offentry = m.get(offenseIndex, crime["REPORTING_AREA"])
+    if (offentry is None):
+        entry = newOffenseEntry(crime["REPORTING_AREA"], crime)
+        lt.addLast(entry["lstoffenses"], crime)
+        m.put(offenseIndex, crime["REPORTING_AREA"], entry)
+    else:
+        entry = me.getValue(offentry)
+        lt.addLast(entry["lstoffenses"], crime)
+    return datentry
 
 def newDataEntry(crime):
     """
@@ -273,7 +290,7 @@ def getCrimesByRangeArea(analyzer, initialArea, finalArea):
     Retorna el numero de crimenes en un rango de areas
     """
     # TODO lab 9, completar la consulta de crimenes por rango de areas
-    lst = om.values(analyzer["areaIndex"], initialDate, finalDate)
+    lst = om.values(analyzer["areaIndex"], int(initialArea), int(finalArea))
     totalcrimes = 0
     for lstdate in lt.iterator(lst):
         totalcrimes += lt.size(lstdate["lstcrimes"])

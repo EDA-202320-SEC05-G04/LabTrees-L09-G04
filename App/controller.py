@@ -163,10 +163,9 @@ def getCrimesByRangeArea(analyzer, initialArea, finalArea):
     Retorna el total de crimenes en un rango de areas
     """
     # recuerde castear los parametros a int
-    initialDate = datetime.datetime.strptime(initialDate, "%Y-%m-%d")
-    finalDate = datetime.datetime.strptime(finalDate, "%Y-%m-%d")
-    return model.getCrimesByRangeArea(analyzer, initialDate.date(),
-                                  finalDate.date())
+    initialDate = int(initialArea)
+    finalDate = int(finalArea)
+    return model.getCrimesByRangeArea(analyzer, initialDate, finalDate)
 
 
 # Funciones para medir tiempos de ejecucion
